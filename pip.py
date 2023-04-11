@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLineEdit, QComboBox, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QLineEdit, QComboBox, QLabel, QMessageBox
 import os
 import io
 import subprocess
@@ -8,7 +8,7 @@ class Janela1(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setGeometry(200, 200, 500, 150)
-        self.setWindowTitle("Janela 1")
+        self.setWindowTitle("Encontrar Arquivos")
 
         self.pesquisa = QLineEdit(self)
         self.pesquisa.setFixedWidth(280)
@@ -32,8 +32,16 @@ class Janela1(QMainWindow):
         self.config.setFixedWidth(100)
         self.config.move(350,10)
 
+        self.caixa = QLabel(self)
+        self.caixa.move(140, 10)
+
+        self.msg = QMessageBox()
+        self.msg.setIcon(QMessageBox.Critical)
+        self.msg.setText("Arquivo não encontrado")
+        self.msg.setWindowTitle("Erro")
+        self.msg.setStandardButtons(QMessageBox.Ok)
+
     def abrir_janela2(self):
-        print('true')
         self.janela2 = Janela2()
         self.janela2.show()
 
@@ -63,7 +71,7 @@ class Janela1(QMainWindow):
                         final = arquivo.split(".")[1]
                         for tipos in imagens:
                             if tipos == final:
-                                encontrado += 1
+                                encontrado = 1
                                 conteudo += 'start '+ caminho_completo + '\n'
                                 with open('abrir.bat', 'w', newline='\r\n') as pontoBAT:
                                     pontoBAT.write(conteudo)
@@ -73,7 +81,7 @@ class Janela1(QMainWindow):
                         final = arquivo.split(".")[1]
                         for tipos in doc:
                             if tipos == final:
-                                encontrado += 1
+                                encontrado = 1
                                 conteudo += 'start '+ caminho_completo + '\n'
                                 with open('abrir.bat', 'w', newline='\r\n') as pontoBAT:
                                     pontoBAT.write(conteudo)
@@ -83,16 +91,15 @@ class Janela1(QMainWindow):
                         final = arquivo.split(".")[1]
                         for tipos in midia:
                             if tipos == final:
-                                encontrado += 1
+                                encontrado = 1
                                 conteudo += 'start '+ caminho_completo + '\n'
                                 with open('abrir.bat', 'w', newline='\r\n') as pontoBAT:
                                     pontoBAT.write(conteudo)
                                 return subprocess.call([caminho_bat])
-                    if encontrado == 0:
-                        print(True)
-                        self.caixa = QLabel(self)
-                        self.caixa.setText('NÃO ENCONTRADO')
-                        self.caixa.move(50, 50)
+        if encontrado == 0:
+            self.msg.exec_()
+        
+                       
 
 
 
@@ -100,7 +107,7 @@ class Janela2(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setGeometry(200, 200, 500, 150)
-        self.setWindowTitle("Janela 2")
+        self.setWindowTitle("Configurações")
 
         with open('config.txt', 'r') as configs:
             diretorio = configs.read()
